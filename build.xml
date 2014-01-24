@@ -1,0 +1,58 @@
+
+<project name = "OrderManagement" default="createZip">
+    <target name="clean">
+        <delete dir = "build"></delete>
+    </target>
+
+    <target name = "createDir" depends="clean">
+        <mkdir dir = "build"></mkdir>
+        <mkdir dir = "build/src"></mkdir>
+        <mkdir dir = "build/test"></mkdir>
+        <mkdir dir = "build/dist/bin"></mkdir>
+        <mkdir dir = "build/dist/lib"></mkdir>
+
+    </target>
+
+    <target name = "compile" depends ="createDir">
+        <mkdir dir = "build/src"></mkdir>
+        <javac srcdir = "src" destdir = "build/src"></javac>
+    </target>
+
+    <target name = "compileTest" depends = "compile">
+        <mkdir dir = "build/test"></mkdir>
+        <javac srcdir = "Test" destdir = "build/test"
+               classpath = "build/src;ExternalLibraries/junit-4.10.jar"></javac>
+    </target>
+
+    <target name="runTest" depends="compileTest">
+        <junit haltonfailure="yes">
+            <classpath>
+                <pathelement location="build/src" />
+                <pathelement location="build/test" />
+                <pathelement location="ExternalLibraries/junit-4.10.jar"/>
+            </classpath>
+            <batchtest>
+                <fileset dir="build/test">
+                    <include name="**/*Test*" />
+                </fileset>
+            </batchtest>
+            <formatter type = "brief" usefile = "false"/>
+        </junit>
+    </target>
+
+    <target name="createJar" depends="runTest">
+        <jar destfile = "build/dist/lib/order-management.jar" basedir = "build/src"></jar>
+    </target>
+
+    <target name="copyShells" depends="createJar">
+        <copy file = "jk_OrderMgmt.sh" todir="build/dist/bin" />
+    </target>
+
+    <target name="copyReadMe" depends="copyShells">
+        <copy file = "README.md" todir = "build/dist"></copy>
+    </target>
+
+    <target name="createZip" depends="copyReadMe">
+        <zip zipFile = "build/OrderManagement.zip" basedir = "build/dist"></zip>
+    </target>
+</project>

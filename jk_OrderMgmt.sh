@@ -1,0 +1,1 @@
+java -cp $ORDERMANAGEMENT_HOME/lib/order-management.jar Client.OrderMgmtMain "$1"
